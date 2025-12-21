@@ -14,7 +14,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f8fafc;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         .view-switcher {
@@ -51,20 +51,19 @@
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
 
-        iframe {
-            width: 100%;
-            height: 100vh;
-            border: none;
+        .view-container {
+            display: none;
         }
 
-        .loading {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .view-container.active {
+            display: block;
+        }
+
+        .message {
+            text-align: center;
+            padding: 100px 20px;
             font-size: 18px;
             color: #667eea;
-            font-weight: 600;
         }
     </style>
 </head>
@@ -78,36 +77,49 @@
         </button>
     </div>
 
-    <div class="loading" id="loading">Chargement du workflow...</div>
-    <iframe id="workflow-frame" src="gestacrises-final-detaille-functions.html" onload="hideLoading()"></iframe>
+    <div class="view-container active" id="view-detail">
+        <div class="message">
+            🚀 Chargement de la vue détaillée...<br><br>
+            Ouvrez <strong>workflow-detail.html</strong> directement pour voir cette vue.
+        </div>
+    </div>
+
+    <div class="view-container" id="view-n8n">
+        <div class="message">
+            🔀 Chargement de la vue n8n...<br><br>
+            Ouvrez <strong>workflow-n8n.html</strong> directement pour voir cette vue.
+        </div>
+    </div>
 
     <script>
         let currentView = 'detail';
 
         function switchView(view) {
-            const iframe = document.getElementById('workflow-frame');
             const btnDetail = document.getElementById('btn-detail');
             const btnN8n = document.getElementById('btn-n8n');
-            const loading = document.getElementById('loading');
+            const viewDetail = document.getElementById('view-detail');
+            const viewN8n = document.getElementById('view-n8n');
 
             if (view === currentView) return;
-
-            loading.style.display = 'block';
             currentView = view;
 
             if (view === 'detail') {
-                iframe.src = 'gestacrises-final-detaille-functions.html';
+                viewDetail.classList.add('active');
+                viewN8n.classList.remove('active');
                 btnDetail.classList.add('active');
                 btnN8n.classList.remove('active');
+                
+                // Rediriger vers le fichier
+                window.location.href = 'workflow-detail.html';
             } else {
-                iframe.src = 'gestacrises-final-n8n-functions.html';
+                viewN8n.classList.add('active');
+                viewDetail.classList.remove('active');
                 btnN8n.classList.add('active');
                 btnDetail.classList.remove('active');
+                
+                // Rediriger vers le fichier
+                window.location.href = 'workflow-n8n.html';
             }
-        }
-
-        function hideLoading() {
-            document.getElementById('loading').style.display = 'none';
         }
 
         // Gestion du clavier
