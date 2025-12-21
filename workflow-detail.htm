@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GESTACRISES - Workflow Final Complet avec Functions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .header h1 {
+            font-size: 38px;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+
+        .header .stats {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 15px;
+        }
+
+        .workflow-container {
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .phase {
+            margin-bottom: 60px;
+        }
+
+        .phase-header {
+            text-align: center;
+            padding: 22px;
+            border-radius: 12px;
+            color: white;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        .phase1-header { background: #3b82f6; border: 3px solid #1e40af; }
+        .phase2-header { background: #f59e0b; border: 3px solid #d97706; }
+        .phase3-header { background: #10b981; border: 3px solid #047857; }
+        .phase-loop-header { background: #8b5cf6; border: 3px solid #6d28d9; }
+
+        .agent-card {
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 22px;
+            border-left: 6px solid #cbd5e1;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .agent-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .agent-card.large { 
+            border-left-color: #dc2626; 
+            background: linear-gradient(to right, #fee2e2 0%, white 8%);
+        }
+
+        .agent-card.small { 
+            border-left-color: #10b981; 
+            background: linear-gradient(to right, #dcfce7 0%, white 8%);
+        }
+
+        .agent-card.web { 
+            border-left-color: #3b82f6; 
+            background: linear-gradient(to right, #dbeafe 0%, white 8%);
+        }
+
+        .agent-card.validation { 
+            border-left-color: #f59e0b; 
+            background: linear-gradient(to right, #fef3c7 0%, white 8%);
+            border: 2px solid #f59e0b;
+        }
+
+        .agent-card.critical { 
+            border-left-color: #dc2626; 
+            background: linear-gradient(to right, #fee2e2 0%, white 8%);
+            border: 3px solid #dc2626;
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { border-color: #dc2626; }
+            50% { border-color: #f87171; }
+        }
+
+        .agent-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .agent-icon {
+            font-size: 36px;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .agent-title-block {
+            flex: 1;
+        }
+
+        .agent-name {
+            font-size: 19px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .agent-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .agent-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .agent-badge {
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .badge-large {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1.5px solid #dc2626;
+        }
+
+        .badge-small {
+            background: #dcfce7;
+            color: #166534;
+            border: 1.5px solid #10b981;
+        }
+
+        .badge-web {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1.5px solid #3b82f6;
+        }
+
+        .badge-validation {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1.5px solid #f59e0b;
+        }
+
+        .agent-content {
+            color: #4b5563;
+            line-height: 1.8;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .agent-content ul {
+            margin: 12px 0;
+            padding-left: 28px;
+        }
+
+        .agent-content li {
+            margin: 8px 0;
+        }
+
+        .agent-functions {
+            margin-top: 18px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .functions-title {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .function-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            background: white;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            margin: 4px 4px 4px 0;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+
+        .function-tag:hover {
+            border-color: #667eea;
+            background: #eef2ff;
+            color: #667eea;
+        }
+
+        .agent-output {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f0f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .output-title {
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .output-content {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .validation-options {
+            margin-top: 16px;
+            padding: 16px;
+            background: #fffbeb;
+            border-radius: 10px;
+            border: 2px solid #fbbf24;
+        }
+
+        .validation-title {
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .validation-option {
+            padding: 12px 16px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            border: 1.5px solid #fbbf24;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .validation-option:hover {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+
+        .arrow-container {
+            text-align: center;
+            margin: 28px 0;
+        }
+
+        .arrow {
+            font-size: 42px;
+            color: #cbd5e1;
+            animation: bounce 2s infinite;
+        }
+
+        .arrow-critical {
+            color: #dc2626;
+            font-weight: bold;
+            font-size: 56px;
+        }
+
+        .arrow-loop {
+            color: #8b5cf6;
+            font-size: 56px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(12px); }
+        }
+
+        .loop-section {
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            padding: 45px;
+            border-radius: 16px;
+            border: 3px solid #8b5cf6;
+            margin: 45px 0;
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
+        }
+
+        .loop-flows {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin: 22px 0;
+        }
+
+        .loop-flow {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            border-left: 5px solid #8b5cf6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .loop-flow-title {
+            font-weight: bold;
+            color: #6d28d9;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .decision-tree {
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+            margin-top: 22px;
+            text-align: center;
+            border: 2px dashed #8b5cf6;
+        }
+
+        .decision-tree-content {
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 2;
+            color: #4b5563;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            padding: 35px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-top: 45px;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 22px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .stat-value {
+            font-size: 44px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .loop-flows {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚨 GESTACRISES - Workflow Final Complet</h1>
+        <p>Méthodologie COMPRENDRE → DÉCIDER → DIRIGER + Boucle Continue</p>
+        <div class="stats">14 Agents Mistral AI • 7 Functions • 6 Validations • Pilotage Temps Réel</div>
+    </div>
+
+    <div class="workflow-container">
+        
+        <!-- DÉMARRAGE -->
+        <div class="agent-card critical">
+            <div class="agent-header">
+                <div class="agent-icon">🚨</div>
+                <div class="agent-title-block">
+                    <div class="agent-name">DÉMARRAGE DE LA CRISE</div>
+                    <div class="agent-subtitle">Point d'entrée du workflow GESTACRISES</div>
+                </div>
+            </div>
+            <div class="agent-content">
+                <strong>Entrées initiales requises :</strong>
+                <ul>
+                    <li>📄 Plan Communal de Sauvegarde (PCS) - Format PDF (~60KB = 15k tokens)</li>
+                    <li>🏷️ Type de crise (inondation, canicule, incendie, accident industriel, tempête, etc.)</li>
+                    <li>📝 Description initiale circonstanciée de la situation</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="arrow-container"><div class="arrow">↓</div></div>
+
+        <!-- ========== PHASE 1 : COMPRENDRE ========== -->
+        <div class="phase phase1">
+            <div class="phase-header phase1-header">📊 PHASE 1 : COMPRENDRE</div>
+            
+            <!-- Agent 1 -->
+            <div class="agent-card large">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 1 : Extracteur PCS</div>
+                        <div class="agent-subtitle">Extraction automatique et structurée du Plan Communal de Sauvegarde</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Analyser le PCS et extraire toutes les informations pertinentes selon le type de crise
+                    <ul>
+                        <li>Identification des acteurs clés (maire, préfet, services municipaux, associations)</li>
+                        <li>Extraction des moyens disponibles (humains, matériels, infrastructures)</li>
+                        <li>Cartographie des zones à risque selon le type de crise déclaré</li>
+                        <li>Extraction des procédures d'alerte et protocoles d'activation</li>
+                        <li>Identification des populations vulnérables prioritaires</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_pcs</span>
+                    <span class="function-tag">sauvegarder_etat</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Données PCS structurées en JSON → Transmises aux agents suivants (Prompt caching activé)</div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Agent 2 -->
+            <div class="agent-card large">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 2 : Analyseur Situation (MEDO)</div>
+                        <div class="agent-subtitle">Analyse matricielle complexe de la situation de crise</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Analyse approfondie selon la matrice MEDO (4 dimensions)
+                    <ul>
+                        <li><strong>MISSION :</strong> De quoi s'agit-il ? Qu'attend-on du PCC ? Quelles composantes ?</li>
+                        <li><strong>ENVIRONNEMENT :</strong> Contexte général, contraintes réglementaires, opportunités</li>
+                        <li><strong>SITUATION :</strong> Acteurs impliqués, risques identifiés, délais critiques</li>
+                        <li><strong>BESOINS & MOYENS :</strong> Ressources nécessaires vs disponibles, écarts à combler</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">sauvegarder_etat</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Conclusions de l'analyse de situation (synthèse matricielle MEDO)</div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Validation 1 -->
+            <div class="agent-card validation">
+                <div class="agent-header">
+                    <div class="agent-icon">✋</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">VALIDATION 1 - Analyse de Situation</div>
+                        <div class="agent-subtitle">Premier point de contrôle humain - Vérification analyse MEDO</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-validation">VALIDATION</span>
+                    </div>
+                </div>
+                <div class="validation-options">
+                    <div class="validation-title">⚡ Options disponibles :</div>
+                    <div class="validation-option">
+                        <strong>1️⃣ VALIDER</strong> - Confirmer l'analyse et passer à l'étape suivante
+                    </div>
+                    <div class="validation-option">
+                        <strong>2️⃣ AMENDER</strong> - Corriger ou compléter les conclusions avant de continuer
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Agent 3 -->
+            <div class="agent-card large">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 3 : Analyseur Mission</div>
+                        <div class="agent-subtitle">Définition précise et exhaustive de la mission du PCC</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Analyse automatique approfondie de la mission du Poste de Commandement Communal
+                    <ul>
+                        <li><strong>De quoi s'agit-il ? Quoi ?</strong> Nature exacte de la mission</li>
+                        <li><strong>Pourquoi ? Qu'attend-on de moi ?</strong> Finalité et attentes</li>
+                        <li><strong>Quelles sont les composantes de la réalisation ?</strong></li>
+                        <li><strong>Quelles sont les tâches à réaliser ?</strong> Actions concrètes</li>
+                        <li><strong>Quelle est ma liberté d'action ?</strong> Contraintes et marges</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">sauvegarder_etat</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Synthèse de la mission du PCC uniquement (format concis et structuré)</div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Validation 2 -->
+            <div class="agent-card validation">
+                <div class="agent-header">
+                    <div class="agent-icon">✋</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">VALIDATION 2 - Mission du PCC</div>
+                        <div class="agent-subtitle">Validation de la synthèse mission avant analyse moyens</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-validation">VALIDATION</span>
+                    </div>
+                </div>
+                <div class="validation-options">
+                    <div class="validation-title">⚡ Options disponibles :</div>
+                    <div class="validation-option">
+                        <strong>1️⃣ VALIDER</strong> - Confirmer la mission et continuer l'analyse
+                    </div>
+                    <div class="validation-option">
+                        <strong>2️⃣ AMENDER</strong> - Ajuster la formulation de la mission
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Agent 4 -->
+            <div class="agent-card large">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 4 : Confrontation Besoins vs Moyens</div>
+                        <div class="agent-subtitle">Analyse comparative et identification des écarts critiques</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Analyse détaillée en fonction du type de crise déclaré
+                    <ul>
+                        <li><strong>Bilan des forces et faiblesses</strong> de l'organisation municipale</li>
+                        <li><strong>Évaluation des capacités</strong> des différents acteurs mobilisables</li>
+                        <li><strong>Évaluation des besoins</strong> en regard des moyens réellement disponibles</li>
+                        <li><strong>Balance des potentiels</strong> (forces mobilisables vs nécessaires)</li>
+                        <li><strong>Besoins en renforts</strong> (humains, matériels, techniques)</li>
+                        <li><strong>Besoins en informations</strong> (données manquantes critiques)</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">sauvegarder_etat</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Conclusions uniquement (synthèse comparative Besoins vs Moyens)</div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Validation 3 -->
+            <div class="agent-card validation">
+                <div class="agent-header">
+                    <div class="agent-icon">✋</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">VALIDATION 3 - Besoins vs Moyens</div>
+                        <div class="agent-subtitle">Validation de l'analyse comparative et des écarts</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-validation">VALIDATION</span>
+                    </div>
+                </div>
+                <div class="validation-options">
+                    <div class="validation-title">⚡ Options disponibles :</div>
+                    <div class="validation-option">
+                        <strong>1️⃣ VALIDER</strong> - Confirmer l'analyse des écarts
+                    </div>
+                    <div class="validation-option">
+                        <strong>2️⃣ AMENDER</strong> - Ajuster les conclusions de l'analyse
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Agent 5 -->
+            <div class="agent-card large">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 5 : Déterminateur Effet Majeur</div>
+                        <div class="agent-subtitle">Identification de l'objectif stratégique principal conditionnant le succès</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Proposition d'effet majeur stratégique
+                    <p style="margin: 14px 0; padding: 16px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 8px;">
+                        <strong>📌 Définition Effet Majeur :</strong><br>
+                        <em>"Ce qui conditionne le succès de la mission et sur lequel on va bâtir toute notre action"</em>
+                    </p>
+                    <p>L'agent propose l'effet majeur qui servira de fondation stratégique à toutes les décisions et actions futures. Cet effet majeur doit être clair, mesurable et atteignable.</p>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">sauvegarder_etat</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Proposition d'effet majeur argumenté et justifié par l'analyse</div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Validation 4 -->
+            <div class="agent-card validation">
+                <div class="agent-header">
+                    <div class="agent-icon">✋</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">VALIDATION 4 - Effet Majeur</div>
+                        <div class="agent-subtitle">Validation de l'objectif stratégique principal</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-validation">VALIDATION</span>
+                    </div>
+                </div>
+                <div class="validation-options">
+                    <div class="validation-title">⚡ Options disponibles :</div>
+                    <div class="validation-option">
+                        <strong>1️⃣ VALIDER</strong> - Confirmer l'effet majeur proposé
+                    </div>
+                    <div class="validation-option">
+                        <strong>2️⃣ AMENDER</strong> - Reformuler l'effet majeur
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-container"><div class="arrow arrow-critical">↓</div></div>
+
+        <!-- ========== PHASE 2 : DÉCIDER ========== -->
+        <div class="phase phase2">
+            <div class="phase-header phase2-header">🎯 PHASE 2 : DÉCIDER</div>
+            
+            <!-- Agent 6 -->
+            <div class="agent-card large">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 6 : Comparateur Modes d'Action</div>
+                        <div class="agent-subtitle">Génération et analyse comparative multi-scénarios</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Génération et comparaison de 2-3 Modes d'Action (MA) possibles
+                    <p style="margin: 12px 0;">L'agent génère plusieurs scénarios d'action et les compare selon :</p>
+                    <ul>
+                        <li><strong>Pour chaque MA :</strong> Objectifs intermédiaires, Contraintes opérationnelles, Risques identifiés</li>
+                        <li><strong>Analyse comparative :</strong> Les + (avantages), Les - (inconvénients)</li>
+                        <li><strong>Quantificateurs :</strong> Scores de faisabilité, notations, probabilités de succès</li>
+                        <li><strong>Critères de choix :</strong> Réalisation de l'effet majeur + Respect des objectifs intermédiaires</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">sauvegarder_etat</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Tableau comparatif des Modes d'Action avec quantificateurs + Balance et synthèse argumentée</div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Validation 5 CRITIQUE -->
+            <div class="agent-card critical">
+                <div class="agent-header">
+                    <div class="agent-icon">⚠️</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">VALIDATION 5 - Choix du Mode d'Action</div>
+                        <div class="agent-subtitle">⚡ POINT DE DÉCISION STRATÉGIQUE MAJEURE ⚡</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-validation">CRITIQUE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Point de décision stratégique déterminant pour toute la suite des opérations</strong>
+                </div>
+                <div class="validation-options">
+                    <div class="validation-title">⚡ Options disponibles :</div>
+                    <div class="validation-option">
+                        <strong>1️⃣ VALIDER</strong> - Choisir un mode d'action tel quel
+                    </div>
+                    <div class="validation-option">
+                        <strong>2️⃣ MIXER</strong> - Combiner 2 modes d'action complémentaires
+                    </div>
+                    <div class="validation-option">
+                        <strong>3️⃣ AMENDER</strong> - Modifier un mode d'action avant validation
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Agent 7 -->
+            <div class="agent-card large">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 7 : Reformulateur Mode d'Action</div>
+                        <div class="agent-subtitle">Formalisation du Mode d'Action définitif après validation</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Reformulation claire et opérationnelle du Mode d'Action définitif
+                    <p style="margin: 10px 0;">L'agent reformule le MA en tenant compte :</p>
+                    <ul>
+                        <li>Du choix validé par l'utilisateur (option VALIDER / MIXER / AMENDER)</li>
+                        <li>Des éventuels mélanges de modes d'action si option MIXER sélectionnée</li>
+                        <li>Des amendements spécifiques demandés si option AMENDER choisie</li>
+                        <li>De la cohérence globale avec l'effet majeur validé</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">sauvegarder_etat</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Mode d'action définitif reformulé, structuré et opérationnel</div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Validation 6 -->
+            <div class="agent-card validation">
+                <div class="agent-header">
+                    <div class="agent-icon">✋</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">VALIDATION 6 - Mode d'Action Définitif</div>
+                        <div class="agent-subtitle">Validation finale avant passage à la phase DIRIGER</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-validation">VALIDATION</span>
+                    </div>
+                </div>
+                <div class="validation-options">
+                    <div class="validation-title">⚡ Options disponibles :</div>
+                    <div class="validation-option">
+                        <strong>1️⃣ VALIDER</strong> - Passer à la phase DIRIGER avec ce MA
+                    </div>
+                    <div class="validation-option">
+                        <strong>2️⃣ AMENDER</strong> - Ajuster une dernière fois la reformulation
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-container"><div class="arrow arrow-critical">↓</div></div>
+
+        <!-- ========== PHASE 3 : DIRIGER ========== -->
+        <div class="phase phase3">
+            <div class="phase-header phase3-header">🚀 PHASE 3 : DIRIGER</div>
+            
+            <!-- Agent 8 -->
+            <div class="agent-card large">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 8 : Générateur Ordres/Consignes</div>
+                        <div class="agent-subtitle">Transmission structurée aux cellules du PCC</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Génération des ordres et consignes pour chaque cellule du Poste de Commandement Communal
+                    <p style="margin: 14px 0; padding: 16px; background: #f0fdfa; border-left: 4px solid #14b8a6; border-radius: 8px;">
+                        <strong>📋 Cadre de communication :</strong><br><br>
+                        <strong>Votre mission :</strong> [Rappel succinct]<br>
+                        <strong>L'objectif est de :</strong> [Effet majeur retenu]<br>
+                        <strong>Pour ce faire :</strong> [Déclinaison du mode d'action choisi]<br>
+                        <strong>Votre action :</strong> [Détails opérationnels]
+                    </p>
+                    <ul>
+                        <li>Cadre espace-temps défini précisément</li>
+                        <li>Moyens dont chaque cellule dispose</li>
+                        <li>Liste exhaustive des actions et leur exécution</li>
+                        <li>Objectifs intermédiaires avec échéances</li>
+                        <li>Indicateurs de réussite mesurables</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">generer_document</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Fiches de mission détaillées par cellule du PCC (ordres & consignes opérationnels)</div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Agent 9 -->
+            <div class="agent-card large">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 9 : Générateur Communication</div>
+                        <div class="agent-subtitle">Plan de communication complet multi-publics</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Élaboration du plan de communication adapté à chaque public cible
+                    <p><strong>📢 Publics cibles identifiés :</strong></p>
+                    <ul>
+                        <li>🏛️ <strong>Autorités</strong> (Préfecture, services de l'État, forces de l'ordre)</li>
+                        <li>👥 <strong>Élus</strong> (Conseil municipal, élus départementaux et régionaux)</li>
+                        <li>👔 <strong>Agents</strong> (Services municipaux, agents du PCC, partenaires)</li>
+                        <li>🏘️ <strong>Population</strong> (Citoyens, entreprises, associations, médias)</li>
+                    </ul>
+                    <p style="margin-top: 12px;"><strong>Pour chaque public cible :</strong></p>
+                    <ul>
+                        <li>Messages adaptés au niveau de compréhension et aux besoins</li>
+                        <li>Canaux de diffusion appropriés (SMS, réseaux sociaux, site web, affichage, radio locale)</li>
+                        <li>Fréquence de diffusion et mise à jour</li>
+                        <li>Responsable de la communication désigné</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">generer_document</span>
+                    <span class="function-tag">envoyer_notification</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Plan de communication complet (messages, canaux, fréquences et responsables par public cible)</div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Agent 10 -->
+            <div class="agent-card large">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 10 : Configurateur Pilotage</div>
+                        <div class="agent-subtitle">Configuration du système de pilotage continu de la crise</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Mise en place du dispositif de suivi et pilotage temps réel
+                    <ul>
+                        <li><strong>Points de situation réguliers :</strong> Fréquence adaptée, format standardisé, indicateurs de suivi</li>
+                        <li><strong>Main-courante :</strong> Structure d'enregistrement chronologique de tous les événements</li>
+                        <li><strong>Sites de veille :</strong> Configuration selon type de crise (Météo France, Vigicrues, etc.)</li>
+                        <li><strong>Procédure de réactivation :</strong> Protocole de relance du workflow si changement majeur</li>
+                        <li><strong>Tableaux de bord :</strong> Indicateurs clés temps réel pour chaque cellule</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">sauvegarder_etat</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Configuration complète : Tableau de bord + Main-courante + Sites de veille + Procédure réactivation</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-container"><div class="arrow arrow-loop">↓</div></div>
+
+        <!-- ========== BOUCLE CONTINUE ========== -->
+        <div class="loop-section">
+            <div class="phase-header phase-loop-header">🔄 BOUCLE CONTINUE - Pilotage Temps Réel</div>
+            
+            <p style="text-align: center; color: #6d28d9; font-size: 17px; margin-bottom: 28px; font-weight: 600;">
+                <strong>Captation et traitement continu des événements pendant toute la durée de la crise</strong>
+            </p>
+
+            <div class="loop-flows">
+                <div class="loop-flow">
+                    <div class="loop-flow-title">📥 FLUX A : Événements Humains</div>
+                    <p style="color: #6b7280; font-size: 14px; line-height: 1.8;">
+                        • <strong>Saisie via chat conversationnel</strong> intégré au PCC<br>
+                        • Agents municipaux au Poste de Commandement<br>
+                        • Équipes terrain (pompiers, police municipale, services techniques)<br>
+                        • Élus et responsables de cellules<br>
+                        • Partenaires externes (associations, entreprises)<br><br>
+                        <em>Exemples : "Évacuation terminée Zone A", "Route D940 coupée", "Besoin renfort 5 agents"</em>
+                    </p>
+                </div>
+
+                <div class="loop-flow">
+                    <div class="loop-flow-title">🌐 FLUX B : Événements Automatiques</div>
+                    <p style="color: #6b7280; font-size: 14px; line-height: 1.8;">
+                        • <strong>Surveillance web continue</strong> automatisée<br>
+                        • Agent 11 (Veilleur Web) avec web_search<br>
+                        • Sites configurés selon type de crise<br>
+                        • Polling intelligent aux horaires critiques<br>
+                        • Détection automatique de seuils<br><br>
+                        <em>Exemples : "Vents 90 km/h prévus 16h", "Niveau crue +50cm", "Température 38°C"</em>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Agent 11 -->
+            <div class="agent-card web" style="margin-top: 25px;">
+                <div class="agent-header">
+                    <div class="agent-icon">🌐</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 11 : Veilleur Web Automatique</div>
+                        <div class="agent-subtitle">Surveillance continue selon le type de crise déclaré</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-small">MISTRAL SMALL</span>
+                        <span class="agent-badge badge-web">+ WEB SEARCH</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Veille automatique sur sites fiables configurés selon le type de crise
+                    <ul>
+                        <li>🌊 <strong>Submersion marine :</strong> Vigicrues, Météo France (marées, coefficients), vigilance côtière</li>
+                        <li>🔥 <strong>Incendie :</strong> Météo France (vents, température, hygrométrie), qualité de l'air, alertes préfecture</li>
+                        <li>🌡️ <strong>Canicule :</strong> Températures temps réel et prévisions, plan canicule national, alertes sanitaires</li>
+                        <li>💥 <strong>Accident industriel :</strong> Qualité de l'air (polluants), bulletins préfecture, consignes confinement</li>
+                        <li>❄️ <strong>Tempête/Neige :</strong> Alertes météo orange/rouge, état des routes, coupures électriques Enedis</li>
+                    </ul>
+                    <p style="margin-top: 12px;"><strong>⏱️ Polling intelligent :</strong> Fréquence adaptée aux horaires critiques (ex: 11h, 14h, 17h pour canicule)</p>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">web_search</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                    <span class="function-tag">envoyer_notification</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Événements détectés automatiquement avec niveau de criticité évalué</div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Agent 12 -->
+            <div class="agent-card small">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 12 : Trieur d'Événements</div>
+                        <div class="agent-subtitle">Classification rapide et efficace de tous les événements</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-small">MISTRAL SMALL</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Trier et classifier TOUS les événements (humains + automatiques)
+                    <ul>
+                        <li>Analyse rapide du contenu de l'événement (~500 tokens)</li>
+                        <li>Classification binaire : <strong>CRITIQUE</strong> ou <strong>PAS CRITIQUE</strong></li>
+                        <li>Extraction des informations structurées (qui, quoi, où, quand)</li>
+                        <li>Évaluation de l'impact potentiel sur la stratégie actuelle</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">Classification (CRITIQUE/PAS CRITIQUE) + Événement structuré JSON</div>
+                </div>
+            </div>
+
+            <div class="decision-tree">
+                <div class="decision-tree-content">
+                    <strong style="font-size: 16px; color: #6d28d9;">🔀 Arbre de Décision Post-Classification</strong><br><br>
+                    Événement classifié par Agent 12<br>
+                    ↓<br>
+                    ┌──────────────────────────────┴──────────────────────────────┐<br>
+                    │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                    <strong style="color: #10b981;">PAS CRITIQUE</strong> (~95%)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong style="color: #dc2626;">CRITIQUE</strong> (~5%)<br>
+                    │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                    ↓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                    📝 Main-courante&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;🤖 Agent 13<br>
+                    (enregistré)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Réévaluation)<br>
+                    ↓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                    Continue veille&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✋ Validation<br>
+                    🔄&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nouvelles décisions<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mise à jour<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;🔄 Retour boucle
+                </div>
+            </div>
+
+            <!-- Agent 13 -->
+            <div class="agent-card large" style="margin-top: 28px;">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 13 : Réévaluateur Rapide</div>
+                        <div class="agent-subtitle">Mini-cycle décisionnel si événement critique détecté</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Réévaluation rapide et ciblée suite à un événement critique
+                    <p style="margin: 14px 0; padding: 16px; background: #fef2f2; border-left: 4px solid #dc2626; border-radius: 8px;">
+                        <strong>⚡ Principe de réactivité :</strong><br>
+                        <em>Nouvelle situation ⇒ nouvelles décisions ⇒ nouvelles consignes ⇒ nouvelles communications</em>
+                    </p>
+                    <ul>
+                        <li>Analyse de l'impact de l'événement sur la situation actuelle</li>
+                        <li>Évaluation si changement d'effet majeur ou de mode d'action nécessaire</li>
+                        <li><strong>Si impact majeur :</strong> Proposition de nouvelles décisions stratégiques</li>
+                        <li><strong>Si impact mineur :</strong> Ajustements tactiques uniquement (pas de changement stratégique)</li>
+                        <li>Génération de nouvelles consignes adaptées si nécessaire</li>
+                        <li>Mise à jour du plan de communication si besoin</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">rechercher_evenements</span>
+                    <span class="function-tag">web_search</span>
+                    <span class="function-tag">envoyer_notification</span>
+                    <span class="function-tag">ecrire_main_courante</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">
+                        • Analyse d'impact détaillée<br>
+                        • Propositions de nouvelles décisions (si nécessaire)<br>
+                        • Nouvelles consignes/communications adaptées<br>
+                        • Mises à jour tableaux de bord
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow-container"><div class="arrow">↓</div></div>
+
+            <!-- Validation événement -->
+            <div class="agent-card validation">
+                <div class="agent-header">
+                    <div class="agent-icon">✋</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">VALIDATION ÉVÉNEMENT - Nouvelles Décisions</div>
+                        <div class="agent-subtitle">Validation des propositions de l'Agent Réévaluateur</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-validation">VALIDATION</span>
+                    </div>
+                </div>
+                <div class="validation-options">
+                    <div class="validation-title">⚡ Options disponibles :</div>
+                    <div class="validation-option">
+                        <strong>1️⃣ VALIDER</strong> - Appliquer les nouvelles décisions proposées
+                    </div>
+                    <div class="validation-option">
+                        <strong>2️⃣ AMENDER</strong> - Ajuster les propositions avant application
+                    </div>
+                    <div class="validation-option">
+                        <strong>3️⃣ REFUSER</strong> - Conserver la stratégie actuelle (événement pas assez critique)
+                    </div>
+                </div>
+            </div>
+
+            <p style="text-align: center; color: #6d28d9; font-size: 19px; margin-top: 35px; font-weight: 700;">
+                🔄 Retour au début de la boucle (captation événements) - Cycle continu
+            </p>
+        </div>
+
+        <!-- ========== RESTITUTION DYNAMIQUE ========== -->
+        <div class="phase">
+            <div class="phase-header" style="background: #6366f1; border-color: #4338ca;">📋 RESTITUTION DYNAMIQUE</div>
+            
+            <!-- Agent 14 -->
+            <div class="agent-card small">
+                <div class="agent-header">
+                    <div class="agent-icon">📄</div>
+                    <div class="agent-title-block">
+                        <div class="agent-name">Agent 14 : Générateur Documents</div>
+                        <div class="agent-subtitle">Génération de documents à la demande (pas seulement en fin de crise)</div>
+                    </div>
+                    <div class="agent-badges">
+                        <span class="agent-badge badge-small">MISTRAL SMALL</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <strong>Mission :</strong> Génération de documents formatés à tout moment de la crise
+                    <ul>
+                        <li>📄 <strong>Formats disponibles :</strong> PDF, Word (DOCX), Email, JSON, TXT</li>
+                        <li>📊 <strong>Types de documents :</strong> Fiches de mission, rapports de situation, communiqués, synthèses</li>
+                        <li>⏱️ <strong>Déclenchement :</strong> À la demande à tout moment (pas uniquement en fin de crise)</li>
+                        <li>📧 <strong>Diffusion automatique :</strong> Envoi par email aux destinataires si demandé</li>
+                        <li>🔄 <strong>Mise à jour dynamique :</strong> Documents actualisés en temps réel avec dernières données</li>
+                    </ul>
+                </div>
+                <div class="agent-functions">
+                    <div class="functions-title">⚡ Functions disponibles :</div>
+                    <span class="function-tag">lire_contexte</span>
+                    <span class="function-tag">generer_document</span>
+                </div>
+                <div class="agent-output">
+                    <div class="output-title">📤 Sortie :</div>
+                    <div class="output-content">
+                        Documents formatés prêts à diffuser (PDF, DOCX, Email, etc.) avec données temps réel
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS FINALES -->
+        <div class="summary-stats">
+            <div class="stat-box">
+                <div class="stat-value">14</div>
+                <div class="stat-label">Agents Mistral AI</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">10</div>
+                <div class="stat-label">Agents LARGE</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Agents SMALL</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">1</div>
+                <div class="stat-label">Agent WEB</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">7</div>
+                <div class="stat-label">Functions Tools</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Points Validation</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Phases Principales</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">∞</div>
+                <div class="stat-label">Boucle Continue</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
