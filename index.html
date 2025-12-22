@@ -419,9 +419,9 @@
 </head>
 <body>
     <div class="header">
-        <h1>🚨 GESTACRISES - Workflow Final Complet</h1>
-        <p>Méthodologie COMPRENDRE → DÉCIDER → DIRIGER + Boucle Continue</p>
-        <div class="stats">14 Agents Mistral AI • 7 Functions • 6 Validations • Pilotage Temps Réel</div>
+        <h1>🚨 GESTACRISES - Workflow avec Orchestrateur</h1>
+        <p>Architecture Multi-Agents : 1 Orchestrateur + 14 Agents Spécialisés</p>
+        <div class="stats">Méthodologie COMPRENDRE → DÉCIDER → DIRIGER + Boucle Continue • 7 Functions • 6 Validations</div>
     </div>
 
     <div class="workflow-container">
@@ -447,9 +447,66 @@
 
         <div class="arrow-container"><div class="arrow">↓</div></div>
 
+        <!-- ========== ORCHESTRATEUR ========== -->
+        <div class="agent-card" style="border-left-color: #8b5cf6; background: linear-gradient(to right, #e9d5ff 0%, white 8%); border: 3px solid #8b5cf6;">
+            <div class="agent-header">
+                <div class="agent-icon">🎯</div>
+                <div class="agent-title-block">
+                    <div class="agent-name">AGENT ORCHESTRATEUR (Chef d'Orchestre)</div>
+                    <div class="agent-subtitle">Coordonne et décide quel agent appeler à chaque étape du workflow</div>
+                </div>
+                <div class="agent-badges">
+                    <span class="agent-badge badge-large">MISTRAL LARGE</span>
+                </div>
+            </div>
+            <div class="agent-content">
+                <strong>Mission :</strong> Gestion intelligente du workflow complet GESTACRISES
+                <p style="margin: 14px 0; padding: 16px; background: #faf5ff; border-left: 4px solid #8b5cf6; border-radius: 8px;">
+                    <strong>🎯 Rôle Central :</strong><br>
+                    L'Orchestrateur est le cerveau qui décide automatiquement quel agent appeler et dans quel ordre, en fonction de la situation. Les 14 agents spécialisés sont ses "outils" (tools/functions).
+                </p>
+                <ul>
+                    <li><strong>Phase COMPRENDRE :</strong> Appelle séquentiellement Agents 1→2→3→4→5 avec validations</li>
+                    <li><strong>Phase DÉCIDER :</strong> Appelle Agents 6→7 avec validation critique du Mode d'Action</li>
+                    <li><strong>Phase DIRIGER :</strong> Appelle en parallèle Agents 8, 9, 10 pour opérationnaliser</li>
+                    <li><strong>Boucle Continue :</strong> Gère le flux événements → Agent 12 → Agent 13 si critique</li>
+                    <li><strong>Adaptation dynamique :</strong> Peut modifier l'ordre ou sauter des étapes selon le contexte</li>
+                    <li><strong>Gestion validations :</strong> Pause le workflow et attend validation humaine quand nécessaire</li>
+                </ul>
+            </div>
+            <div class="agent-functions">
+                <div class="functions-title">⚡ Les 14 agents comme Tools disponibles :</div>
+                <span class="function-tag">agent_1_extracteur_pcs</span>
+                <span class="function-tag">agent_2_analyseur_medo</span>
+                <span class="function-tag">agent_3_analyseur_mission</span>
+                <span class="function-tag">agent_4_besoins_moyens</span>
+                <span class="function-tag">agent_5_effet_majeur</span>
+                <span class="function-tag">agent_6_modes_action</span>
+                <span class="function-tag">agent_7_reformulateur</span>
+                <span class="function-tag">agent_8_ordres</span>
+                <span class="function-tag">agent_9_communication</span>
+                <span class="function-tag">agent_10_pilotage</span>
+                <span class="function-tag">agent_11_veilleur_web</span>
+                <span class="function-tag">agent_12_trieur</span>
+                <span class="function-tag">agent_13_reevaluateur</span>
+                <span class="function-tag">agent_14_documents</span>
+            </div>
+            <div class="agent-output">
+                <div class="output-title">📤 Coordination :</div>
+                <div class="output-content">
+                    Appelle les agents dans l'ordre optimal → Collecte leurs résultats → Passe au suivant → Gère les validations → Adapte le workflow si nécessaire
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-container"><div class="arrow" style="color: #8b5cf6;">↓</div></div>
+
         <!-- ========== PHASE 1 : COMPRENDRE ========== -->
         <div class="phase phase1">
             <div class="phase-header phase1-header">📊 PHASE 1 : COMPRENDRE</div>
+            <p style="text-align: center; color: #1e40af; font-size: 14px; margin: -20px 0 30px 0; font-style: italic;">
+                (Orchestrateur appelle séquentiellement : Agent 1 → 2 → 3 → 4 → 5 avec validations)
+            </p>
             
             <!-- Agent 1 -->
             <div class="agent-card large">
@@ -733,6 +790,9 @@
         <!-- ========== PHASE 2 : DÉCIDER ========== -->
         <div class="phase phase2">
             <div class="phase-header phase2-header">🎯 PHASE 2 : DÉCIDER</div>
+            <p style="text-align: center; color: #d97706; font-size: 14px; margin: -20px 0 30px 0; font-style: italic;">
+                (Orchestrateur appelle : Agent 6 → Validation CRITIQUE → Agent 7)
+            </p>
             
             <!-- Agent 6 -->
             <div class="agent-card large">
@@ -866,6 +926,9 @@
         <!-- ========== PHASE 3 : DIRIGER ========== -->
         <div class="phase phase3">
             <div class="phase-header phase3-header">🚀 PHASE 3 : DIRIGER</div>
+            <p style="text-align: center; color: #047857; font-size: 14px; margin: -20px 0 30px 0; font-style: italic;">
+                (Orchestrateur appelle en parallèle : Agents 8, 9, 10 pour opérationnalisation)
+            </p>
             
             <!-- Agent 8 -->
             <div class="agent-card large">
@@ -994,6 +1057,9 @@
         <!-- ========== BOUCLE CONTINUE ========== -->
         <div class="loop-section">
             <div class="phase-header phase-loop-header">🔄 BOUCLE CONTINUE - Pilotage Temps Réel</div>
+            <p style="text-align: center; color: #6d28d9; font-size: 14px; margin: -15px 0 20px 0; font-style: italic;">
+                (Orchestrateur gère : Événement terrain → Agent 12 trieur → Si critique: Agent 13 réévaluateur → Validation)
+            </p>
             
             <p style="text-align: center; color: #6d28d9; font-size: 17px; margin-bottom: 28px; font-weight: 600;">
                 <strong>Captation et traitement continu des événements pendant toute la durée de la crise</strong>
@@ -1003,11 +1069,12 @@
                 <div class="loop-flow">
                     <div class="loop-flow-title">📥 FLUX A : Événements Humains</div>
                     <p style="color: #6b7280; font-size: 14px; line-height: 1.8;">
-                        • <strong>Saisie via chat conversationnel</strong> intégré au PCC<br>
+                        • <strong>Saisie via formulaire rapide</strong> (200 caractères max)<br>
                         • Agents municipaux au Poste de Commandement<br>
-                        • Équipes terrain (pompiers, police municipale, services techniques)<br>
+                        • Remontées terrain (pompiers, police, services techniques)<br>
                         • Élus et responsables de cellules<br>
                         • Partenaires externes (associations, entreprises)<br><br>
+                        → <strong>Orchestrateur reçoit</strong> → Appelle Agent 12 pour classification<br><br>
                         <em>Exemples : "Évacuation terminée Zone A", "Route D940 coupée", "Besoin renfort 5 agents"</em>
                     </p>
                 </div>
@@ -1016,10 +1083,11 @@
                     <div class="loop-flow-title">🌐 FLUX B : Événements Automatiques</div>
                     <p style="color: #6b7280; font-size: 14px; line-height: 1.8;">
                         • <strong>Surveillance web continue</strong> automatisée<br>
-                        • Agent 11 (Veilleur Web) avec web_search<br>
+                        • Orchestrateur déclenche Agent 11 (Veilleur Web) périodiquement<br>
                         • Sites configurés selon type de crise<br>
                         • Polling intelligent aux horaires critiques<br>
                         • Détection automatique de seuils<br><br>
+                        → <strong>Agent 11 détecte</strong> → Orchestrateur appelle Agent 12<br><br>
                         <em>Exemples : "Vents 90 km/h prévus 16h", "Niveau crue +50cm", "Température 38°C"</em>
                     </p>
                 </div>
@@ -1240,8 +1308,12 @@
         <!-- STATS FINALES -->
         <div class="summary-stats">
             <div class="stat-box">
+                <div class="stat-value">1</div>
+                <div class="stat-label">Orchestrateur</div>
+            </div>
+            <div class="stat-box">
                 <div class="stat-value">14</div>
-                <div class="stat-label">Agents Mistral AI</div>
+                <div class="stat-label">Agents Spécialisés</div>
             </div>
             <div class="stat-box">
                 <div class="stat-value">10</div>
@@ -1270,9 +1342,6 @@
             <div class="stat-box">
                 <div class="stat-value">∞</div>
                 <div class="stat-label">Boucle Continue</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value"></div>
             </div>
         </div>
     </div>
