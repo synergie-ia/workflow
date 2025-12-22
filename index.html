@@ -415,6 +415,121 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* === POPUPS MODALES === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.2s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f3f4f6;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #e5e7eb;
+            color: #dc2626;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+            padding-right: 30px;
+        }
+
+        .modal-content {
+            color: #4b5563;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .modal-section {
+            margin: 16px 0;
+        }
+
+        .modal-section-title {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .modal-param {
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin: 6px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #1f2937;
+        }
+
+        .function-tag.clickable {
+            cursor: pointer;
+        }
+
+        .function-tag.clickable:hover {
+            border-color: #667eea;
+            background: #eef2ff;
+            color: #667eea;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -1345,5 +1460,261 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL POPUP -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-content" id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // === DONNÉES DES AGENTS ===
+        const agentsData = {
+            'agent_1_extracteur_pcs': {
+                title: '🤖 Agent 1 : Extracteur PCS',
+                content: 'Extrait et structure automatiquement les données du Plan Communal de Sauvegarde (PDF)'
+            },
+            'agent_2_analyseur_medo': {
+                title: '🤖 Agent 2 : Analyseur MEDO',
+                content: 'Analyse la situation selon 4 axes : Mission, Environnement, Situation, Besoins & Moyens'
+            },
+            'agent_3_analyseur_mission': {
+                title: '🤖 Agent 3 : Analyseur Mission',
+                content: 'Définit précisément la mission du PCC : quoi, pourquoi, comment, avec quelles contraintes'
+            },
+            'agent_4_besoins_moyens': {
+                title: '🤖 Agent 4 : Besoins vs Moyens',
+                content: 'Compare les ressources disponibles aux besoins réels et identifie les écarts critiques'
+            },
+            'agent_5_effet_majeur': {
+                title: '🤖 Agent 5 : Effet Majeur',
+                content: 'Détermine l\'objectif stratégique principal qui conditionne le succès de la mission'
+            },
+            'agent_6_modes_action': {
+                title: '🤖 Agent 6 : Modes d\'Action',
+                content: 'Génère et compare 2-3 scénarios d\'action possibles avec leurs avantages/inconvénients'
+            },
+            'agent_7_reformulateur': {
+                title: '🤖 Agent 7 : Reformulateur',
+                content: 'Reformule le Mode d\'Action définitif de manière claire et opérationnelle après validation'
+            },
+            'agent_8_ordres': {
+                title: '🤖 Agent 8 : Générateur Ordres',
+                content: 'Génère les ordres et consignes détaillées pour chaque cellule du PCC'
+            },
+            'agent_9_communication': {
+                title: '🤖 Agent 9 : Communication',
+                content: 'Crée le plan de communication adapté à chaque public (Autorités, Élus, Agents, Population)'
+            },
+            'agent_10_pilotage': {
+                title: '🤖 Agent 10 : Configurateur Pilotage',
+                content: 'Configure le système de pilotage continu : main-courante, veille web, tableaux de bord'
+            },
+            'agent_11_veilleur_web': {
+                title: '🌐 Agent 11 : Veilleur Web',
+                content: 'Surveille automatiquement le web selon le type de crise (météo, crues, qualité air...)'
+            },
+            'agent_12_trieur': {
+                title: '🤖 Agent 12 : Trieur d\'Événements',
+                content: 'Classifie rapidement tous les événements en CRITIQUE ou PAS CRITIQUE'
+            },
+            'agent_13_reevaluateur': {
+                title: '🤖 Agent 13 : Réévaluateur',
+                content: 'Réévalue la stratégie et propose de nouvelles décisions si événement critique détecté'
+            },
+            'agent_14_documents': {
+                title: '📄 Agent 14 : Générateur Documents',
+                content: 'Génère des documents formatés à la demande (PDF, DOCX, emails, rapports)'
+            }
+        };
+
+        // === DONNÉES DES FUNCTIONS ===
+        const functionsData = {
+            'lire_pcs': {
+                title: '⚡ lire_pcs',
+                content: `
+                    <div class="modal-section">
+                        <div class="modal-section-title">📥 Paramètres :</div>
+                        <div class="modal-param">commune: string</div>
+                        <div class="modal-param">section?: "acteurs" | "moyens" | "risques" | "procedures" | "complet"</div>
+                    </div>
+                    <div class="modal-section">
+                        <div class="modal-section-title">📤 Retourne :</div>
+                        <div class="modal-param">JSON { commune, contenu, sections: {...} }</div>
+                    </div>
+                `
+            },
+            'lire_contexte': {
+                title: '⚡ lire_contexte',
+                content: `
+                    <div class="modal-section">
+                        <div class="modal-section-title">📥 Paramètres :</div>
+                        <div class="modal-param">elements: string[]<br>Ex: ["situation_actuelle", "effet_majeur", "mode_action"]</div>
+                    </div>
+                    <div class="modal-section">
+                        <div class="modal-section-title">📤 Retourne :</div>
+                        <div class="modal-param">JSON avec contexte demandé</div>
+                    </div>
+                `
+            },
+            'sauvegarder_etat': {
+                title: '⚡ sauvegarder_etat',
+                content: `
+                    <div class="modal-section">
+                        <div class="modal-section-title">📥 Paramètres :</div>
+                        <div class="modal-param">phase: "COMPRENDRE" | "DECIDER" | "DIRIGER"</div>
+                        <div class="modal-param">agent_actuel: string</div>
+                        <div class="modal-param">donnees: object (JSON)</div>
+                    </div>
+                    <div class="modal-section">
+                        <div class="modal-section-title">📤 Retourne :</div>
+                        <div class="modal-param">{ success: true, timestamp, fichier }</div>
+                    </div>
+                `
+            },
+            'ecrire_main_courante': {
+                title: '⚡ ecrire_main_courante',
+                content: `
+                    <div class="modal-section">
+                        <div class="modal-section-title">📥 Paramètres :</div>
+                        <div class="modal-param">timestamp: string (ISO 8601)</div>
+                        <div class="modal-param">source: "TERRAIN" | "PCC" | "WEB" | "AGENT_IA"</div>
+                        <div class="modal-param">evenement: string</div>
+                        <div class="modal-param">auteur: string</div>
+                        <div class="modal-param">criticite?: "INFO" | "NORMAL" | "IMPORTANT" | "CRITIQUE"</div>
+                    </div>
+                    <div class="modal-section">
+                        <div class="modal-section-title">📤 Retourne :</div>
+                        <div class="modal-param">{ success: true, id: number }</div>
+                    </div>
+                `
+            },
+            'rechercher_evenements': {
+                title: '⚡ rechercher_evenements',
+                content: `
+                    <div class="modal-section">
+                        <div class="modal-section-title">📥 Paramètres :</div>
+                        <div class="modal-param">filtre_source?: string</div>
+                        <div class="modal-param">filtre_criticite?: string</div>
+                        <div class="modal-param">depuis?: string (date ISO)</div>
+                        <div class="modal-param">limite?: number (max 10)</div>
+                    </div>
+                    <div class="modal-section">
+                        <div class="modal-section-title">📤 Retourne :</div>
+                        <div class="modal-param">Array d'événements JSON</div>
+                    </div>
+                `
+            },
+            'envoyer_notification': {
+                title: '⚡ envoyer_notification',
+                content: `
+                    <div class="modal-section">
+                        <div class="modal-section-title">📥 Paramètres :</div>
+                        <div class="modal-param">destinataire: string</div>
+                        <div class="modal-param">type: "INFO" | "ALERTE" | "URGENCE"</div>
+                        <div class="modal-param">message: string</div>
+                        <div class="modal-param">canal?: "EMAIL" | "SMS" | "CHAT" | "TOUS"</div>
+                    </div>
+                    <div class="modal-section">
+                        <div class="modal-section-title">📤 Retourne :</div>
+                        <div class="modal-param">{ success: true, envois: [...] }</div>
+                    </div>
+                `
+            },
+            'generer_document': {
+                title: '⚡ generer_document',
+                content: `
+                    <div class="modal-section">
+                        <div class="modal-section-title">📥 Paramètres :</div>
+                        <div class="modal-param">type: "FICHE_MISSION" | "COMMUNIQUE" | "RAPPORT"</div>
+                        <div class="modal-param">format: "PDF" | "DOCX" | "TXT" | "JSON"</div>
+                        <div class="modal-param">contenu: object (structure selon type)</div>
+                        <div class="modal-param">destinataire?: string</div>
+                    </div>
+                    <div class="modal-section">
+                        <div class="modal-section-title">📤 Retourne :</div>
+                        <div class="modal-param">{ success: true, fichier, url_download }</div>
+                    </div>
+                `
+            },
+            'web_search': {
+                title: '⚡ web_search',
+                content: `
+                    <div class="modal-section">
+                        <div class="modal-section-title">📥 Paramètres :</div>
+                        <div class="modal-param">query: string (requête de recherche)</div>
+                    </div>
+                    <div class="modal-section">
+                        <div class="modal-section-title">📤 Retourne :</div>
+                        <div class="modal-param">{ results: [ { title, snippet, url } ] }</div>
+                    </div>
+                    <div class="modal-section">
+                        <div class="modal-section-title">ℹ️ Note :</div>
+                        <div style="color: #6b7280; font-size: 13px; margin-top: 8px;">
+                            Fonction native Mistral AI (pas besoin de coder)
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // === FONCTIONS MODAL ===
+        function openModal(type, key) {
+            const modal = document.getElementById('modalOverlay');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            const data = type === 'agent' ? agentsData[key] : functionsData[key];
+            
+            if (data) {
+                title.innerHTML = data.title;
+                content.innerHTML = data.content;
+                modal.classList.add('active');
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modalOverlay');
+            modal.classList.remove('active');
+        }
+
+        // Fermer si clic en dehors de la box
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Fermer avec touche Échap
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // === RENDRE LES TAGS CLIQUABLES ===
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agents dans l'orchestrateur
+            const agentTags = document.querySelectorAll('.agent-functions .function-tag');
+            agentTags.forEach(tag => {
+                const text = tag.textContent.trim();
+                
+                // Si c'est un agent (commence par agent_)
+                if (text.startsWith('agent_') && agentsData[text]) {
+                    tag.classList.add('clickable');
+                    tag.addEventListener('click', () => openModal('agent', text));
+                }
+                
+                // Si c'est une function
+                if (functionsData[text]) {
+                    tag.classList.add('clickable');
+                    tag.addEventListener('click', () => openModal('function', text));
+                }
+            });
+        });
+    </script>
 </body>
 </html>
